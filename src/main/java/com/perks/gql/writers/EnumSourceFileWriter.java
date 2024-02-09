@@ -4,6 +4,7 @@ import com.perks.gql.scalars.EnumInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,9 +17,9 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 public class EnumSourceFileWriter implements SourceFileWriter<EnumInfo> {
 
     @Override
-    public void write(Set<EnumInfo> scalars, String relativeDirectoryPath) {
+    public void write(Set<EnumInfo> enumInfoSet, String relativeDirectoryPath, Map<String, String> scalars) {
 
-        scalars.forEach(enumInfo -> {
+        enumInfoSet.forEach(enumInfo -> {
 
             if (enumInfo.getName() != null) {
 

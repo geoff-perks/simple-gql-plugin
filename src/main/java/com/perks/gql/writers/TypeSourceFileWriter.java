@@ -5,6 +5,7 @@ import com.perks.gql.scalars.TypeInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,9 +18,9 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 public class TypeSourceFileWriter implements SourceFileWriter<TypeInfo> {
 
     @Override
-    public void write(Set<TypeInfo> scalars, String relativeDirectoryPath) {
+    public void write(Set<TypeInfo> typeInfoSet, String relativeDirectoryPath, Map<String, String> scalars) {
 
-        scalars.forEach(typeInfo -> {
+        typeInfoSet.forEach(typeInfo -> {
             if (typeInfo.getName() != null) {
 
                 StringBuilder contents = new StringBuilder();
@@ -39,6 +40,7 @@ public class TypeSourceFileWriter implements SourceFileWriter<TypeInfo> {
                 packageBuilder.append(";").append("\n");
 
                 contents.append("package ").append(packageBuilder).append("\n");
+//                scalars.forEach((k, v) -> contents.append("import ").append(v).append(";").append("\n"));
                 contents.append("/**").append("\n");
                 contents.append(" * The ").append(capitalize(typeInfo.getName())).append(" record").append("\n");
                 contents.append(" */").append("\n");
@@ -48,8 +50,12 @@ public class TypeSourceFileWriter implements SourceFileWriter<TypeInfo> {
                 List<FieldInfo> fields = new ArrayList<>(typeInfo.getFields());
 
                 for (int i = 0; i < fields.size(); i++) {
+
                     FieldInfo field = fields.get(i);
-                    contents.append(field.getType()).append(" ").append(field.getName());
+                    contents.append(scalars.containsKey(field.getType()) ? scalars.get(field.getType()) : field.getType())
+                            .append(" ")
+                            .append(field.getName());
+
                     if (i < fields.size() - 1) {
                         contents.append(", ");
                     }
