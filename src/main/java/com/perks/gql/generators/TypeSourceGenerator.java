@@ -27,7 +27,7 @@ public class TypeSourceGenerator implements SourceGenerator<Set<TypeInfo>> {
     public Set<TypeInfo> generate(String schema) {
 
         Set<TypeInfo> typeInfos = new HashSet<>();
-        String[] typeDefinitions = schema.split("type ");
+        String[] typeDefinitions = schema.split("\\b(?:type|input)\\b");
 
         // Start from index 1 to skip the initial empty string
         for (int i = 1; i < typeDefinitions.length; i++) {

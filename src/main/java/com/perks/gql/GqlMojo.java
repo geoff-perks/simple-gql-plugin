@@ -12,14 +12,25 @@ import com.perks.gql.writers.TypeSourceFileWriter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
+@Mojo(name = "generate-gql-model")
 public class GqlMojo extends AbstractMojo {
 
-    private static final String GRAPHQL_SCHEMA = "schema.graphql";
+    @Parameter(property = "graphQlSchemaName", defaultValue = "src/main/resources/schema.graphql")
+    private String graphQlSchemaName;
 
-    private String relativeDirectoryPath = "src/main/java/com/perks/gql/model/";
+    @Parameter(property = "packageName", defaultValue = "com.perks.gql")
+    private String packageName;
+
+    @Parameter(property = "scalars")
+    private Map<String, String> scalars;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -28,19 +39,25 @@ public class GqlMojo extends AbstractMojo {
 
         // parse the schema
         Parser parser = new SchemaParser();
-        StringBuilder schema = parser.parse(GRAPHQL_SCHEMA);
+        StringBuilder schema = parser.parse(graphQlSchemaName);
 
         // generate the source
         Set<TypeInfo> generatedTypes = new TypeSourceGenerator().generate(schema.toString());
         Set<EnumInfo> generatedEnums = new EnumSourceGenerator().generate(schema.toString());
 
+        String relativeDirectoryWithPackageName =
+                "src/main/java/" + packageName.replaceAll("\\.", "/") + "/";
+
+        System.out.println("Scalars include: ");
+        scalars.forEach((key, value) -> System.out.println(key));
+
         // write the record sources to file
         SourceFileWriter<TypeInfo> typeSourceFileWriter = new TypeSourceFileWriter();
-        typeSourceFileWriter.write(generatedTypes, relativeDirectoryPath);
+        typeSourceFileWriter.write(generatedTypes, relativeDirectoryWithPackageName, Optional.of(scalars).orElse(Collections.emptyMap()));
 
         // write the enum sources to file
         SourceFileWriter<EnumInfo> enumSourceFileWriter = new EnumSourceFileWriter();
-        enumSourceFileWriter.write(generatedEnums, relativeDirectoryPath);
+        enumSourceFileWriter.write(generatedEnums, relativeDirectoryWithPackageName, Optional.of(scalars).orElse(Collections.emptyMap()));
 
         System.out.println("Generating sources complete!");
     }

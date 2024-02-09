@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
@@ -18,10 +19,10 @@ public interface SourceFileWriter<T extends Scalar> {
     /**
      * Generates the source code
      *
-     * @param scalars the scalars to use
+     * @param types the types to use
      * @param relativeDirectoryPath the relative directory path
      */
-    void write(Set<T> scalars, String relativeDirectoryPath);
+    void write(Set<T> types, String relativeDirectoryPath, Map<String, String> scalars);
 
     /**
      * Used for writing the source file
