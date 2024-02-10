@@ -1,11 +1,13 @@
 package com.perks.gql.scalars;
 
+import com.perks.gql.writers.Writable;
+
 import java.util.Set;
 
 /**
  * The EnumInfo which represents an enum in a GQL Schema
  */
-public class EnumInfo implements Scalar {
+public class EnumInfo implements Writable {
 
     private final String name;
 

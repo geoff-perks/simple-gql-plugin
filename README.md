@@ -47,4 +47,4 @@ In the **build** element of your pom.xml add the following:
 
 * graphQlSchemaName - the graphQlSchemaName is the relative path to the schema including the file which must be a .graphql file
 * packageName - the packageName is the package name to where you wish to generate the model sources
-* scalars - the scalars is a map which consist of the GQL scalar as the key, and the replacement class for the scalar, e.g. where the GQL scalar is Int, this can be replaced with Integer
+* scalars - the scalars is a map which consist of the GQL writable as the key, and the replacement class for the writable, e.g. where the GQL writable is Int, this can be replaced with Integer

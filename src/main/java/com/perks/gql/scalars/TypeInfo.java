@@ -1,12 +1,14 @@
 package com.perks.gql.scalars;
 
+import com.perks.gql.writers.Writable;
+
 import java.util.Objects;
 import java.util.Set;
 
 /**
  * The TypeInfo which represents a type within a GQL Schema
  */
-public class TypeInfo implements Scalar {
+public class TypeInfo implements Writable {
 
     private final String name;
 
