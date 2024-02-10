@@ -18,11 +18,6 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
  */
 public class TypeSourceGenerator implements SourceGenerator<Set<TypeInfo>> {
 
-    private final List<String> EXCLUSIONS = Arrays.asList("Query", "Mutation");
-
-    private final Map<String, String> scalarTypes =
-            Map.of("Int", "Integer", "UUID", "String");
-
     @Override
     public Set<TypeInfo> generate(String schema) {
 
@@ -41,9 +36,6 @@ public class TypeSourceGenerator implements SourceGenerator<Set<TypeInfo>> {
 
             if (matcher.find()) {
                 typeName = matcher.group(1);
-                if (EXCLUSIONS.contains(typeName)) {
-                    continue;
-                }
             }
 
             // Extract fields
@@ -55,7 +47,7 @@ public class TypeSourceGenerator implements SourceGenerator<Set<TypeInfo>> {
                 String fieldName = matcher.group(1);
                 String fieldType = matcher.group(2);
                 if (!containsField(fields, fieldName)) {
-                    FieldInfo fieldInfo = new FieldInfo(fieldName, scalarTypes.getOrDefault(capitalize(fieldType), capitalize(fieldType)));
+                    FieldInfo fieldInfo = new FieldInfo(fieldName, capitalize(fieldType));
                     fields.add(fieldInfo);
                 } else {
                     System.err.println("Duplicate field found: " + fieldName);

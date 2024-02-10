@@ -22,6 +22,6 @@ public class QuerySourceFileWriter {
         queryableBuilder.append("public interface Queryable extends Serializable {\n}");
 
         WritableUtils.instance()
-                .writeItem(new WritableItem(QUERYABLE_NAME, packageName ,queryableBuilder));
+                .writeItem(new WritableItem(QUERYABLE_NAME, packageName, queryableBuilder));
     }
 }
