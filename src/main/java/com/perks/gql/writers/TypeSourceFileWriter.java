@@ -2,13 +2,12 @@ package com.perks.gql.writers;
 
 import com.perks.gql.scalars.FieldInfo;
 import com.perks.gql.scalars.TypeInfo;
+import com.perks.gql.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.capitalize;
 
@@ -18,32 +17,23 @@ import static org.apache.commons.lang3.StringUtils.capitalize;
 public class TypeSourceFileWriter implements SourceFileWriter<TypeInfo> {
 
     @Override
-    public void write(Set<TypeInfo> typeInfoSet, String relativeDirectoryPath, Map<String, String> scalars) {
+    public void write(Set<TypeInfo> typeInfoSet, String packageName, Map<String, String> scalars) {
 
         typeInfoSet.forEach(typeInfo -> {
+
             if (typeInfo.getName() != null) {
 
                 StringBuilder contents = new StringBuilder();
 
-                List<String> relativePackage = Stream.of(relativeDirectoryPath.split("/")).collect(Collectors.toList());
-                List<String> absolutePackage = relativePackage.subList(3, relativePackage.size());
-                StringBuilder packageBuilder = new StringBuilder();
-
-                for (int i = 0; i <= absolutePackage.size() - 1; i++) {
-                    if (i != absolutePackage.size() - 1) {
-                        packageBuilder.append(String.format("%s.", absolutePackage.get(i)));
-                    } else {
-                        packageBuilder.append(String.format("%s", absolutePackage.get(i)));
-                    }
-                }
-
-                packageBuilder.append(";").append("\n");
-
-                contents.append("package ").append(packageBuilder).append("\n");
-//                scalars.forEach((k, v) -> contents.append("import ").append(v).append(";").append("\n"));
-                contents.append("/**").append("\n");
+                contents.append("package ").append(packageName).append(".").append(Constants.MODEL_PACKAGE_NAME.getConstant()).append(";");
+                contents.append(System.lineSeparator());
+                contents.append(System.lineSeparator());
+                contents.append("import ").append(packageName).append(String.format(".%s;", Constants.QUERYABLE_CLASS_NAME.getConstant()));
+                contents.append(System.lineSeparator());
+                contents.append(System.lineSeparator());
+                contents.append("/**").append(System.lineSeparator());
                 contents.append(" * The ").append(capitalize(typeInfo.getName())).append(" record").append("\n");
-                contents.append(" */").append("\n");
+                contents.append(" */").append(System.lineSeparator());
 
                 contents.append("public record ").append(capitalize(typeInfo.getName())).append("(");
 
@@ -60,10 +50,11 @@ public class TypeSourceFileWriter implements SourceFileWriter<TypeInfo> {
                         contents.append(", ");
                     }
                 }
-                contents.append(") {");
-                contents.append("\n").append("}");
+                contents.append(String.format(") implements %s {", Constants.QUERYABLE_CLASS_NAME.getConstant()));
+                contents.append(System.lineSeparator()).append("}");
 
-                writeFile(relativeDirectoryPath, contents, typeInfo);
+                writeFile(new WritableItem(typeInfo.getName(),
+                        packageName + "." + Constants.MODEL_PACKAGE_NAME.getConstant(), contents));
             }
         });
     }

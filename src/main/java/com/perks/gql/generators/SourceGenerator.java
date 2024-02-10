@@ -1,6 +1,6 @@
 package com.perks.gql.generators;
 
-import com.perks.gql.scalars.Scalar;
+import com.perks.gql.writers.Writable;
 
 import java.util.Set;
 
@@ -8,7 +8,7 @@ import java.util.Set;
  * The source generator interface
  *
  */
-public interface SourceGenerator<T extends Set<? extends Scalar>> {
+public interface SourceGenerator<T extends Set<? extends Writable>> {
 
     /**
      * Generates the source from the schema
